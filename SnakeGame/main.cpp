@@ -236,20 +236,6 @@ void SnakeGame::GameOver(){
 	SDL_Rect dst = {(surface -> w - TextEnd -> w) / 2, (surface -> h - TextEnd -> h) / 2, 0, 0};
 	SDL_BlitSurface(TextEnd, NULL, surface, &dst);
 	SDL_UpdateWindowSurface(window);
-	SDL_Event e;
-	bool quit = false;
-	while (!quit){
-		while (SDL_PollEvent(&e) != 0)
-			if (e.type == SDL_QUIT) quit = true;
-		SDL_Delay(true);
-	}
-	SDL_FreeSurface(TextEnd);
-	SDL_FreeSurface(surface);	
-	TTF_CloseFont(ScoreFont);
-	TTF_CloseFont(GameOverFont);
-	TTF_Quit();
-	SDL_Quit();   
-	SDL_DestroyWindow(window); 
 }
 
 int main(int argc, char* argv[]){
@@ -275,6 +261,7 @@ int main(int argc, char* argv[]){
 	SDL_Event event;
 	
 	bool quit = false;
+	bool IsOver = false;
 	
 	while (!quit){
 		
@@ -287,34 +274,45 @@ int main(int argc, char* argv[]){
 				else if((event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d) && Move.front() != Left)	Move.push(Right);
 			}
 		}
-					
-		if(SnakeGame.CheckLose()){
-			Sound.GameOver();
-			SnakeGame.GameOver();
+		
+		if(!IsOver){
+			if(SnakeGame.CheckLose()){
+				Sound.GameOver();
+				SnakeGame.GameOver();
+				IsOver = true;
+			}
 		}
 		
-		SnakeGame.MakeTail();
-		
-		if(SnakeGame.AppleIsEaten()){
-			Sound.Apple();
-			SnakeGame.NewApplePosition();
-			SnakeGame.PrintScore();
-			SnakeGame.PrintHighScore();	
+		if(!IsOver){
+			
+			SnakeGame.MakeTail();
+			
+			if(SnakeGame.AppleIsEaten()){
+				Sound.Apple();
+				SnakeGame.NewApplePosition();
+				SnakeGame.PrintScore();
+				SnakeGame.PrintHighScore();	
+			}
+			
+			if(Move.size() == 2)
+				Move.pop();
+			if(!Move.empty())
+				SnakeGame.Movement(Move.front());
+			
+			SnakeGame.DrawSnakeHead();
+			
+			SDL_UpdateWindowSurface(window);
+	
+			SDL_Delay(100);	
 		}
-		
-		if(Move.size() == 2)
-			Move.pop();
-		if(!Move.empty())
-			SnakeGame.Movement(Move.front());
-		
-		SnakeGame.DrawSnakeHead();
-		
-		SDL_UpdateWindowSurface(window);
-
-		SDL_Delay(100);	
-				
 	}
 	
+	SDL_FreeSurface(TextEnd);
+	SDL_FreeSurface(surface);	
+	TTF_CloseFont(ScoreFont);
+	TTF_CloseFont(GameOverFont);
+	TTF_Quit();
+	SDL_Quit();   
+	SDL_DestroyWindow(window); 
 	return 0;
-	
 }
