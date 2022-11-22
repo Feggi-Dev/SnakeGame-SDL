@@ -48,7 +48,7 @@ const SDL_Color BoardLimitColor = {0x00, 0x00, 0xff};
 struct Sound{
 	Sound(){
 	Mix_Init(0);
-	Mix_OpenAudio(15000, MIX_DEFAULT_FORMAT, 2, 1024);
+	Mix_OpenAudio(10000, MIX_DEFAULT_FORMAT, 2, 1024);
 	AppleEatenSound = Mix_LoadWAV("AppleEatenSound.wav");
 	GameOverSound = Mix_LoadWAV("GameOverSound.wav");
 	}
@@ -83,7 +83,7 @@ class SnakeGame{
     	void MoveLeft()		{Sx--;};
     	void MoveRight()	{Sx++;};
     	void Movement(char);
-    	void DrawSnakeHead(){DrawSquare(Sx, Sy, SnakeColor);};
+    	void DrawSnake(){DrawSquare(Sx, Sy, SnakeColor);};
 		void MakeTail();
 		bool CheckSelfCollision();
 		bool CheckLose();
@@ -148,11 +148,8 @@ void SnakeGame::Movement(char Movement){
 
 void SnakeGame::MakeTail(){
 	Tail.push_back(make_pair(Sx, Sy));
-	if(SnakeGame::AppleIsEaten()){
-		DrawSquare(Sx, Sy, SnakeColor);
-	}
-	else{
-		DrawSquare(Tail[0].first, Tail[0].second, Black);
+	if(!SnakeGame::AppleIsEaten()){
+	DrawSquare(Tail[0].first, Tail[0].second, Black);
 		Tail.erase(Tail.begin());
 	}
 }
@@ -176,8 +173,7 @@ bool SnakeGame::CheckLose(){
 bool SnakeGame::AppleIsEaten(){
 	if(Sx == Ax && Sy == Ay)
 		return true;
-	else
-		return false;
+	return false;
 }
 
 void SnakeGame::NewApplePosition(){
@@ -299,7 +295,7 @@ int main(int argc, char* argv[]){
 			if(!Move.empty())
 				SnakeGame.Movement(Move.front());
 			
-			SnakeGame.DrawSnakeHead();
+			SnakeGame.DrawSnake();
 			
 			SDL_UpdateWindowSurface(window);
 	
@@ -315,4 +311,5 @@ int main(int argc, char* argv[]){
 	SDL_Quit();   
 	SDL_DestroyWindow(window); 
 	return 0;
+	
 }
