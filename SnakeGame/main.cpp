@@ -84,7 +84,7 @@ class SnakeGame{
     	void MoveRight()	{Sx++;};
     	void Movement(char);
     	void DrawSnake(){DrawSquare(Sx, Sy, SnakeColor);};
-		void MakeTail();
+		bool MakeTail();
 		bool CheckSelfCollision();
 		bool CheckLose();
 		bool AppleIsEaten();
@@ -146,12 +146,14 @@ void SnakeGame::Movement(char Movement){
 	}
 }
 
-void SnakeGame::MakeTail(){
+bool SnakeGame::MakeTail(){
 	Tail.push_back(make_pair(Sx, Sy));
 	if(!SnakeGame::AppleIsEaten()){
 	DrawSquare(Tail[0].first, Tail[0].second, Black);
 		Tail.erase(Tail.begin());
+		return false;
 	}
+	return true;
 }
 
 bool SnakeGame::CheckSelfCollision(){
@@ -281,9 +283,7 @@ int main(int argc, char* argv[]){
 		
 		if(!IsOver){
 			
-			SnakeGame.MakeTail();
-			
-			if(SnakeGame.AppleIsEaten()){
+			if(SnakeGame.MakeTail()){
 				Sound.Apple();
 				SnakeGame.NewApplePosition();
 				SnakeGame.PrintScore();
