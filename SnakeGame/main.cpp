@@ -17,7 +17,8 @@
 			    - If the snake eats itself, you lose.
 			- If the snake goes on the blue border, you lose.
 		
-				Press a command key to start moving!
+		  If you lose, press <<enter>> to start a new game.
+				Press a command key to start moving!	 
 */
 
 using namespace std;
@@ -89,9 +90,10 @@ class SnakeGame{
 		bool CheckLose();
 		bool AppleIsEaten();
 		void NewApplePosition();
-		void PrintScore();
+		void PrintScore(SDL_Color Col);
 		void PrintHighScore();
 		void GameOver();
+		void Restart();
 	private:
 		int Sx, Sy;	//Snake coords
 		int Ax, Ay;	//Apple coords
@@ -100,25 +102,22 @@ class SnakeGame{
 };
 
 SnakeGame::SnakeGame(){
-//	Snake initial coords
+	//Snake initial coords
 	Sx = BoardWidth / 2;
 	Sy = BoardHeight / 2 + 2;
-	
-//	List initialization for apple random spawning
+	//List initialization for apple random spawning
 	for(int i = 1; i < BoardWidth + 1; i++){
 		for(int j = 3; j < BoardHeight + 3; j++){
 			List.push_back(make_pair(i, j));
 		}
 	}
-
-//	Drawing board limits
+	//Drawing board limits
 	for(int i = 0; i < BoardWidth + 2; i++){
 		for(int j = 2; j < BoardHeight + 4; j++){
 			if(i == 0 || j == 2 || i == BoardWidth + 1 || j == BoardHeight + 3)
 				DrawSquare(i, j, BoardLimitColor);
 		}
 	}
-	
 	//Printing title
 	TextSnakeGame = TTF_RenderText_Blended(ScoreFont, "SnakeGame!", SnakeColor);
 	SDL_Rect dst = {(surface -> w - TextSnakeGame -> w) / 2, 0, 0, 0};
@@ -196,11 +195,11 @@ void SnakeGame::NewApplePosition(){
 	}
 }
 
-void SnakeGame::PrintScore(){
+void SnakeGame::PrintScore(SDL_Color Col){
 	stringstream ss;
 	ss << Tail.size();
 	string StrDef = "Score:" + ss.str();
-	TextScore = TTF_RenderText_Shaded(ScoreFont, StrDef.c_str(), White, Black);
+	TextScore = TTF_RenderText_Shaded(ScoreFont, StrDef.c_str(), Col, Black);
 	SDL_Rect dst = {BlockSize, BlockSize, 0, 0};
 	SDL_BlitSurface(TextScore, NULL, surface, &dst);
 	SDL_UpdateWindowSurface(window);
@@ -236,6 +235,29 @@ void SnakeGame::GameOver(){
 	SDL_UpdateWindowSurface(window);
 }
 
+void SnakeGame::Restart(){
+	//Erase score
+	SnakeGame::PrintScore(Black);
+	//Draw starting board
+	for(int i = 0; i < BoardWidth + 2; i++){
+		for(int j = 2; j < BoardHeight + 4; j++){
+			if(i == 0 || j == 2 || i == BoardWidth + 1 || j == BoardHeight + 3)
+				DrawSquare(i, j, BoardLimitColor);
+			else
+				DrawSquare(i, j, Black);
+		}
+	}
+	//There is no tail now
+	Tail.clear();
+	//Print Score:0
+	SnakeGame::PrintScore(White);
+	//Snake initial coords
+	Sx = BoardWidth / 2;
+	Sy = BoardHeight / 2 + 2;
+	//First apple spawn
+	SnakeGame::NewApplePosition();
+}
+
 int main(int argc, char* argv[]){
 
 	srand(time(NULL));
@@ -250,7 +272,7 @@ int main(int argc, char* argv[]){
 	
 	Sound Sound;
 	SnakeGame SnakeGame;
-	SnakeGame.PrintScore();
+	SnakeGame.PrintScore(White);
 	SnakeGame.PrintHighScore();	
 	SnakeGame.NewApplePosition();
 	
@@ -260,6 +282,7 @@ int main(int argc, char* argv[]){
 	
 	bool quit = false;
 	bool IsOver = false;
+	bool Restart = false;
 	
 	while (!quit){
 		
@@ -271,8 +294,13 @@ int main(int argc, char* argv[]){
 				else if((event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a) && Move.front() != Right)	Move.push(Left);
 				else if((event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d) && Move.front() != Left)	Move.push(Right);
 			}
+			if(IsOver && event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN){
+				SnakeGame.Restart(); 
+				Move = queue<char>();
+				IsOver = false;
+			}
 		}
-		
+
 		if(!IsOver){
 			if(SnakeGame.CheckLose()){
 				Sound.GameOver();
@@ -286,7 +314,7 @@ int main(int argc, char* argv[]){
 			if(SnakeGame.MakeTail()){
 				Sound.Apple();
 				SnakeGame.NewApplePosition();
-				SnakeGame.PrintScore();
+				SnakeGame.PrintScore(White);
 				SnakeGame.PrintHighScore();	
 			}
 			
@@ -301,6 +329,7 @@ int main(int argc, char* argv[]){
 	
 			SDL_Delay(100);	
 		}
+		
 	}
 	
 	SDL_FreeSurface(TextEnd);
@@ -310,6 +339,7 @@ int main(int argc, char* argv[]){
 	TTF_Quit();
 	SDL_Quit();   
 	SDL_DestroyWindow(window); 
+	
 	return 0;
 	
 }
