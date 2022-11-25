@@ -276,7 +276,7 @@ int main(int argc, char* argv[]){
 	SnakeGame.PrintHighScore();	
 	SnakeGame.NewApplePosition();
 	
-	queue <char> Move;
+	queue<char> Move;
 	
 	SDL_Event event;
 	
@@ -285,7 +285,6 @@ int main(int argc, char* argv[]){
 	bool Restart = false;
 	
 	while (!quit){
-		
 		while (SDL_PollEvent(&event) != 0){
 			if(event.type == SDL_QUIT)	quit = true;
 			if(event.key.state == SDL_PRESSED && Move.size() < 2){
@@ -295,15 +294,16 @@ int main(int argc, char* argv[]){
 				else if((event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d) && Move.front() != Left)	Move.push(Right);
 			}
 			if(IsOver && event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN){
-				SnakeGame.Restart(); 
-				Move = queue<char>();
+				SnakeGame.Restart();
+				while(!Move.empty()){Move.pop();}
+				Move.push(5);
 				IsOver = false;
 			}
 		}
 
 		if(!IsOver){
 			if(SnakeGame.CheckLose()){
-				Sound.GameOver();
+			//	Sound.GameOver();
 				SnakeGame.GameOver();
 				IsOver = true;
 			}
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]){
 		if(!IsOver){
 			
 			if(SnakeGame.MakeTail()){
-				Sound.Apple();
+			//	Sound.Apple();
 				SnakeGame.NewApplePosition();
 				SnakeGame.PrintScore(White);
 				SnakeGame.PrintHighScore();	
@@ -332,11 +332,11 @@ int main(int argc, char* argv[]){
 		
 	}
 	
-	SDL_FreeSurface(TextEnd);
-	SDL_FreeSurface(surface);	
 	TTF_CloseFont(ScoreFont);
 	TTF_CloseFont(GameOverFont);
 	TTF_Quit();
+	SDL_FreeSurface(TextEnd);
+	SDL_FreeSurface(surface);	
 	SDL_Quit();   
 	SDL_DestroyWindow(window); 
 	
