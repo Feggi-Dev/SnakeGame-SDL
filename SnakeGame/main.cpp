@@ -303,7 +303,7 @@ int main(int argc, char* argv[]){
 
 		if(!IsOver){
 			if(SnakeGame.CheckLose()){
-			//	Sound.GameOver();
+				Sound.GameOver();
 				SnakeGame.GameOver();
 				IsOver = true;
 			}
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]){
 		if(!IsOver){
 			
 			if(SnakeGame.MakeTail()){
-			//	Sound.Apple();
+			Sound.Apple();
 				SnakeGame.NewApplePosition();
 				SnakeGame.PrintScore(White);
 				SnakeGame.PrintHighScore();	
