@@ -80,7 +80,7 @@ class SnakeGame{
 	public:
 		SnakeGame();
 		void MoveUp()		{Sy--;};
-   	 	void MoveDown()		{Sy++;};
+   		void MoveDown()		{Sy++;};
     	void MoveLeft()		{Sx--;};
     	void MoveRight()	{Sx++;};
     	void Movement(char);
@@ -125,7 +125,7 @@ SnakeGame::SnakeGame(){
 }
 
 enum Directions{
-	Up, Down, Left, Right
+	Up, Down, Left, Right, Nothing
 };
 
 void SnakeGame::Movement(char Movement){
@@ -141,6 +141,8 @@ void SnakeGame::Movement(char Movement){
 			break;
 		case Right:
 			SnakeGame::MoveRight();
+			break;
+		default:
 			break;
 	}
 }
@@ -296,7 +298,7 @@ int main(int argc, char* argv[]){
 			if(IsOver && event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN){
 				SnakeGame.Restart();
 				while(!Move.empty()){Move.pop();}
-				Move.push(5);
+				Move.push(Nothing);
 				IsOver = false;
 			}
 		}
@@ -312,7 +314,7 @@ int main(int argc, char* argv[]){
 		if(!IsOver){
 			
 			if(SnakeGame.MakeTail()){
-			Sound.Apple();
+				Sound.Apple();
 				SnakeGame.NewApplePosition();
 				SnakeGame.PrintScore(White);
 				SnakeGame.PrintHighScore();	
@@ -339,7 +341,5 @@ int main(int argc, char* argv[]){
 	SDL_FreeSurface(surface);	
 	SDL_Quit();   
 	SDL_DestroyWindow(window); 
-	
 	return 0;
-	
 }
