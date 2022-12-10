@@ -46,15 +46,16 @@ const SDL_Color AppleColor = {0xff, 0x00, 0x00};
 const SDL_Color SnakeColor = {0x00, 0xff, 0x00};
 const SDL_Color BoardLimitColor = {0x00, 0x00, 0xff};
 
-struct Sound{
-	Sound(){
-	Mix_Init(0);
-	Mix_OpenAudio(10000, MIX_DEFAULT_FORMAT, 2, 1024);
-	AppleEatenSound = Mix_LoadWAV("AppleEatenSound.wav");
-	GameOverSound = Mix_LoadWAV("GameOverSound.wav");
-	}
-	void Apple()	{Mix_PlayChannel(-1, AppleEatenSound, 0);};
-	void GameOver()	{Mix_PlayChannel(-1, GameOverSound, 0);};
+class Sound{
+	public:
+		Sound(){
+		Mix_Init(0);
+		Mix_OpenAudio(10000, MIX_DEFAULT_FORMAT, 2, 1024);
+		AppleEatenSound = Mix_LoadWAV("AppleEatenSound.wav");
+		GameOverSound = Mix_LoadWAV("GameOverSound.wav");
+		}
+		void Apple()	{Mix_PlayChannel(-1, AppleEatenSound, 0);};
+		void GameOver()	{Mix_PlayChannel(-1, GameOverSound, 0);};
 };
 
 void DrawSquare(unsigned int x, unsigned int y, const SDL_Color col){
