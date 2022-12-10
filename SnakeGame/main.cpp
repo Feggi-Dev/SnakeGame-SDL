@@ -185,6 +185,7 @@ void SnakeGame::NewApplePosition(){
 			if((Tail[j].first == List[i].first && Tail[j].second == List[i].second) || (List[i].first == Sx && List[i].second == Sy)){
 				List.erase(List.begin() + i);
 				i--;
+				break;
 			}
 		}
 	}
